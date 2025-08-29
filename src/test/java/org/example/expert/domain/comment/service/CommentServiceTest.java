@@ -5,6 +5,7 @@ import org.example.expert.domain.comment.dto.response.CommentSaveResponse;
 import org.example.expert.domain.comment.entity.Comment;
 import org.example.expert.domain.comment.repository.CommentRepository;
 import org.example.expert.domain.common.dto.AuthUser;
+import org.example.expert.domain.common.exception.InvalidRequestException;
 import org.example.expert.domain.common.exception.ServerException;
 import org.example.expert.domain.todo.entity.Todo;
 import org.example.expert.domain.todo.repository.TodoRepository;
@@ -36,6 +37,7 @@ class CommentServiceTest {
     @Test
     public void comment_등록_중_할일을_찾지_못해_에러가_발생한다() {
         // given
+        // 일단 댓글을 만들려면 authUser, todoId, commentSaveRequest가 필요하다.
         long todoId = 1;
         CommentSaveRequest request = new CommentSaveRequest("contents");
         AuthUser authUser = new AuthUser(1L, "email", UserRole.USER);
@@ -43,11 +45,13 @@ class CommentServiceTest {
         given(todoRepository.findById(anyLong())).willReturn(Optional.empty());
 
         // when
-        ServerException exception = assertThrows(ServerException.class, () -> {
+        // CommentService에서 saveComment에서는 InvalidRequestException이지만, 여기는 ServerException이다.
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
             commentService.saveComment(authUser, todoId, request);
         });
 
         // then
+        // "Todo not found" 맞는지 확인
         assertEquals("Todo not found", exception.getMessage());
     }
 

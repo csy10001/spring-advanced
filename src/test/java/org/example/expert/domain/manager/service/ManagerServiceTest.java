@@ -54,6 +54,7 @@ class ManagerServiceTest {
     @Test
     void todo의_user가_null인_경우_예외가_발생한다() {
         // given
+        // saveManager는 authUser, todoId, managerSaveRequest가 필요하다.
         AuthUser authUser = new AuthUser(1L, "a@a.com", UserRole.USER);
         long todoId = 1L;
         long managerUserId = 2L;
@@ -70,7 +71,8 @@ class ManagerServiceTest {
             managerService.saveManager(authUser, todoId, managerSaveRequest)
         );
 
-        assertEquals("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.", exception.getMessage());
+        // user가 null인 경우니까 아래 처럼이 아니라 "등록하려고 하는 담당자 유저가 존재하지 않습니다." 로직이 나와야 할것이다.
+        assertEquals("일정 작성자는 본인을 담당자로 등록할 수 없습니다.", exception.getMessage());
     }
 
     @Test // 테스트코드 샘플

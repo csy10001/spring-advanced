@@ -23,6 +23,7 @@ public class Todo extends Timestamped {
     private String contents;
     private String weather;
 
+    // LAZY면 조회 X
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
